@@ -1,7 +1,7 @@
 <!-- breadcrumb -->
 <div class="page-bar">
     <ul class="page-breadcrumb">
-        <li>
+         <li>
             <a href="<?php base_url(); ?>">Home</a>
             <i class="fa fa-circle"></i>
         </li>
@@ -10,7 +10,11 @@
             <i class="fa fa-circle"></i>
         </li>
         <li>
-            <span>Business Group</span>
+            <a href="#">Business Group</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <span>Business Unit</span>
         </li>
     </ul>
 </div>
@@ -20,14 +24,14 @@
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs">
-                <li class="active">
+                <li class="">
                     <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-1">
                         <i class="blue"></i>
                         <strong> Business Group </strong>
                     </a>
                 </li>
-                <li class="">
-                    <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-2">
+                <li class="active">
+                    <a href="javascript:;" data-toggle="tab" aria-expanded="true">
                         <i class="blue"></i>
                         <strong> Business Unit </strong>
                     </a>
@@ -37,9 +41,24 @@
 
         <div class="tab-content no-border">
             <div class="row">
-                <div class="col-xs-12">
-                   <table id="grid-table"></table>
-                   <div id="grid-pager"></div>
+                <div class="col-md-4">
+                    <div class="portlet red box menu-panel">
+                        <div class="portlet-title">
+                            <div class="caption">Business Unit</div>
+                            <div class="tools">
+                                <a class="collapse" href="javascript:;" data-original-title="" title=""> </a>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <div id="tree-menu">
+                                <!-- tree menu here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <table id="grid-table"></table>
+                    <div id="grid-pager"></div>
                 </div>
             </div>
         </div>
@@ -47,54 +66,43 @@
 </div>
 
 <script>
-$("#tab-2").on("click", function(event) {
-
+$("#tab-1").on("click", function(event) {
     event.stopPropagation();
-    var grid = $('#grid-table');
-    businessgroupid_pk = grid.jqGrid ('getGridParam', 'selrow');
-    businessgroupcode = grid.jqGrid ('getCell', businessgroupid_pk, 'code');
-
-    if(businessgroupid_pk == null) {
-        swal('Informasi','Silahkan pilih salah satu Business Group','info');
-        return false;
-    }
-
-    loadContentWithParams("data_master.business_unit", {
-        businessgroupid_fk: businessgroupid_pk,
-        businessgroupcode : businessgroupcode
-    });
+    loadContentWithParams("data_master.business_group",{});
 });
 </script>
 
-<script>
 
-    jQuery(function($) {
+<script>
+    $(function($) {
         var grid_selector = "#grid-table";
         var pager_selector = "#grid-pager";
 
-        jQuery("#grid-table").jqGrid({
-            url: '<?php echo WS_JQGRID."data_master.business_group_controller/crud"; ?>',
+        $("#grid-table").jqGrid({
+            url: '<?php echo WS_JQGRID."data_master.business_unit_controller/crud"; ?>',
+            postData: { businessgroupid_fk : <?php echo $this->input->post('businessgroupid_fk'); ?>},
             datatype: "json",
             mtype: "POST",
             colModel: [
-                {label: 'ID', name: 'businessgroupid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
-                {label: 'Business Group Code',name: 'code',width: 150, align: "left",editable: true,
+                {label: 'ID', name: 'businessunitid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
+                {label: 'Parent ID', name: 'parentid_fk', width: 5, sorttype: 'number', editable: true, hidden: true},
+                {label: 'Code',name: 'code',width: 150, align: "left",editable: true,
                     editoptions: {
-                        size: 30,
+                        size: 15,
                         maxlength:32
                     },
                     editrules: {required: true}
                 },
-                {label: 'Business Group Name',name: 'bgname',width: 150, align: "left",editable: true,
+                {label: 'Business Unit',name: 'buname',width: 150, align: "left",editable: true,
                     editoptions: {
                         size: 30,
                         maxlength:64
                     },
                     editrules: {required: true}
                 },
-                {label: 'Listing No',name: 'listingno',width: 150, align: "left",editable: true, number:true,
+                {label: 'Listing No',name: 'listingno',width: 150, align: "left",editable: true,
                     editoptions: {
-                        size: 15,
+                        size: 30,
                         maxlength:255,
                         dataInit: function(element) {
                             $(element).keypress(function(e){
@@ -104,28 +112,30 @@ $("#tab-2").on("click", function(event) {
                             });
                         }
                     },
-                    editrules: {required: false}
+                    editrules: {required: true}
                 },
+
                 {label: 'Description',name: 'description',width: 200, align: "left",editable: true,
                     edittype:'textarea',
                     editoptions: {
                         rows: 2,
-                        cols:50
+                        cols:50,
+                        maxlength:128
                     }
                 }
             ],
             height: '100%',
             autowidth: true,
-            viewrecords: true,
             rowNum: 10,
-            rowList: [10,20,50],
+            viewrecords: true,
+            rowList: [10, 20, 50],
             rownumbers: true, // show row numbers
             rownumWidth: 35, // the width of the row numbers columns
             altRows: true,
             shrinkToFit: true,
             multiboxonly: true,
             onSelectRow: function (rowid) {
-                /*do something when selected*/
+                //do something
 
             },
             sortorder:'',
@@ -139,15 +149,15 @@ $("#tab-2").on("click", function(event) {
                 if(response.success == false) {
                     swal({title: 'Attention', text: response.message, html: true, type: "warning"});
                 }
-
             },
             //memanggil controller jqgrid yang ada di controller crud
-            editurl: '<?php echo WS_JQGRID."data_master.business_group_controller/crud"; ?>',
-            caption: "Business Group"
+            editurl: '<?php echo WS_JQGRID."data_master.business_unit_controller/crud"; ?>',
+            caption: "Sub Business Unit"
 
         });
 
-        jQuery('#grid-table').jqGrid('navGrid', '#grid-pager',
+
+        $('#grid-table').jqGrid('navGrid', '#grid-pager',
             {   //navbar options
                 edit: true,
                 editicon: 'fa fa-pencil blue bigger-120',
@@ -160,7 +170,7 @@ $("#tab-2").on("click", function(event) {
                 refresh: true,
                 afterRefresh: function () {
                     // some code here
-                    jQuery("#detailsPlaceholder").hide();
+                    $("#detailsPlaceholder").hide();
                 },
 
                 refreshicon: 'fa fa-refresh green bigger-120',
@@ -181,22 +191,33 @@ $("#tab-2").on("click", function(event) {
                 beforeShowForm: function (e, form) {
                     var form = $(e[0]);
                     style_edit_form(form);
-
                 },
                 afterShowForm: function(form) {
                     form.closest('.ui-jqdialog').center();
                 },
                 afterSubmit:function(response,postdata) {
-                    var response = jQuery.parseJSON(response.responseText);
+                    var response = $.parseJSON(response.responseText);
                     if(response.success == false) {
                         return [false,response.message,response.responseText];
                     }
+                    reloadTreeMenu();
                     return [true,"",response.responseText];
                 }
             },
             {
+                editData: {
+                    parentid_fk: function() {
+                        var item = $('#tree-menu').jqxTree('getSelectedItem');
+                        var id = $(item).attr('id');
+                        return id;
+                    },
+                    businessgroupid_fk: function() {
+                        return <?php echo $this->input->post('businessgroupid_fk'); ?>;
+                    }
+                },
                 //new record form
-                closeAfterAdd: false,
+                serializeEditData: serializeJSON,
+                closeAfterAdd: true,
                 clearAfterAdd : true,
                 closeOnEscape:true,
                 recreateForm: true,
@@ -204,17 +225,17 @@ $("#tab-2").on("click", function(event) {
                 errorTextFormat: function (data) {
                     return 'Error: ' + data.responseText
                 },
-                serializeEditData: serializeJSON,
                 viewPagerButtons: false,
                 beforeShowForm: function (e, form) {
                     var form = $(e[0]);
                     style_edit_form(form);
+
                 },
                 afterShowForm: function(form) {
                     form.closest('.ui-jqdialog').center();
                 },
                 afterSubmit:function(response,postdata) {
-                    var response = jQuery.parseJSON(response.responseText);
+                    var response = $.parseJSON(response.responseText);
                     if(response.success == false) {
                         return [false,response.message,response.responseText];
                     }
@@ -224,6 +245,7 @@ $("#tab-2").on("click", function(event) {
                     tinfoel.delay(3000).fadeOut();
 
 
+                    reloadTreeMenu();
                     return [true,"",response.responseText];
                 }
             },
@@ -243,10 +265,12 @@ $("#tab-2").on("click", function(event) {
                     //alert(1);
                 },
                 afterSubmit:function(response,postdata) {
-                    var response = jQuery.parseJSON(response.responseText);
+                    var response = $.parseJSON(response.responseText);
                     if(response.success == false) {
                         return [false,response.message,response.responseText];
                     }
+
+                    reloadTreeMenu();
                     return [true,"",response.responseText];
                 }
             },
@@ -257,6 +281,7 @@ $("#tab-2").on("click", function(event) {
                 afterShowSearch: function (e) {
                     var form = $(e[0]);
                     style_search_form(form);
+
                     form.closest('.ui-jqdialog').center();
                 },
                 afterRedraw: function () {
@@ -273,13 +298,51 @@ $("#tab-2").on("click", function(event) {
         );
 
     });
+</script>
 
-    function responsive_jqgrid(grid_selector, pager_selector) {
 
-        var parent_column = $(grid_selector).closest('[class*="col-"]');
-        $(grid_selector).jqGrid( 'setGridWidth', $(".page-content").width() );
-        $(pager_selector).jqGrid( 'setGridWidth', parent_column.width() );
+<script>
+    function reloadTreeMenu() {
+        var source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'id' },
+                { name: 'parentid' },
+                { name: 'text' },
+                { name: 'expanded' },
+                { name: 'selected' },
+                { name: 'icon' }
+            ],
+            id: 'id',
+            url: '<?php echo WS_JQGRID."data_master.business_unit_controller/tree_json?businessgroupid_fk=".$this->input->post("businessgroupid_fk")."&businessgroupcode=".$this->input->post("businessgroupcode"); ?>',
+            async: false
+        };
+
+        $('#tree-menu').jqxTree('clear');
+
+        // create data adapter.
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        dataAdapter.dataBind();
+        var records = dataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{ name: 'text', map: 'label'}]);
+        $('#tree-menu').jqxTree({
+            source: records
+        });
 
     }
 
+    $(function($) {
+        reloadTreeMenu();
+
+        $('#tree-menu').on('select', function (event) {
+            var item = $('#tree-menu').jqxTree('getItem', event.args.element);
+            $('#grid-table').jqGrid('setGridParam', {
+                url: '<?php echo WS_JQGRID."data_master.business_unit_controller/crud"; ?>',
+                postData: {parentid_fk: item.id, businessgroupid_fk: <?php echo $this->input->post('businessgroupid_fk'); ?>}
+            });
+
+            $('#grid-table').jqGrid('setCaption', 'Sub Business Unit :: ' + item.label);
+            $("#grid-table").trigger("reloadGrid");
+        });
+    });
 </script>

@@ -17,7 +17,7 @@
         <div class="rows">
         <?php foreach($modules as $module): ?>
             <div class="col-xs-6 col-md-3">
-                <div class="portlet box blue">
+                <div class="portlet box red">
                     <div class="portlet-title">
                         <div class="caption">
                             <?php echo $module['module_name']; ?>
