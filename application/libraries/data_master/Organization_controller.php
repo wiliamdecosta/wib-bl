@@ -1,25 +1,28 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
 * Json library
-* @class Depreciation_controller
-* @version 2018-05-24 15:14:27
+* @class Organization_controller
+* @version 2018-05-29 15:39:02
 */
-class Depreciation_controller {
+class Organization_controller {
 
     function read() {
 
         $page = getVarClean('page','int',1);
         $limit = getVarClean('rows','int',5);
-        $sidx = getVarClean('sidx','str','depreciationid_pk');
+        $sidx = getVarClean('sidx','str','listingno');
         $sord = getVarClean('sord','str','asc');
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
+        $parentid_fk = getVarClean('parentid_fk','int',0);
+        $organizationgroupid_fk = getVarClean('organizationgroupid_fk','int',0);
+
         try {
 
             $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
+            $ci->load->model('data_master/organization');
+            $table = $ci->organization;
 
             $req_param = array(
                 "sort_by" => $sidx,
@@ -35,8 +38,17 @@ class Depreciation_controller {
                 "search_str" => isset($_REQUEST['searchString']) ? $_REQUEST['searchString'] : null
             );
 
-            // Filter Table
             $req_param['where'] = array();
+            // Filter Table
+            if(empty($parentid_fk)) {
+                $req_param['where'][] = 'parentid_fk is null';
+            }else {
+                $req_param['where'][] = 'parentid_fk = '.$parentid_fk;
+            }
+
+            if(!empty($organizationgroupid_fk)) {
+                $req_param['where'][] = 'organizationgroupid_fk = '.$organizationgroupid_fk;
+            }
 
             $table->setJQGridParam($req_param);
             $count = $table->countAll();
@@ -62,7 +74,7 @@ class Depreciation_controller {
 
             $data['rows'] = $table->getAll();
             $data['success'] = true;
-            logging('view data master depreciation');
+            logging('view data business unit');
         }catch (Exception $e) {
             $data['message'] = $e->getMessage();
         }
@@ -86,12 +98,12 @@ class Depreciation_controller {
         try {
 
             $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
+            $ci->load->model('data_master/organization');
+            $table = $ci->organization;
 
             if(!empty($searchPhrase)) {
                 $table->setCriteria("upper(code) like upper('%".$searchPhrase."%') OR
-                                         upper(description) like upper('%".$searchPhrase."%')");
+                                         upper(organizationname) like upper('%".$searchPhrase."%')");
 
             }
 
@@ -110,7 +122,8 @@ class Depreciation_controller {
         return $data;
     }
 
-    function crud() {
+
+   function crud() {
 
         $data = array();
         $oper = getVarClean('oper', 'str', '');
@@ -139,12 +152,11 @@ class Depreciation_controller {
         return $data;
     }
 
-
     function create() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/organization');
+        $table = $ci->organization;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -198,8 +210,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data added successfully';
-                logging('create data master depreciation');
-
+                logging('create data business unit');
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
 
@@ -215,8 +226,8 @@ class Depreciation_controller {
     function update() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/organization');
+        $table = $ci->organization;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -270,7 +281,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data update successfully';
-                logging('update data master depreciation');
+                logging('update data business unit');
                 $data['rows'] = $table->get($items[$table->pkey]);
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
@@ -286,8 +297,8 @@ class Depreciation_controller {
 
     function destroy() {
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/organization');
+        $table = $ci->organization;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -301,6 +312,7 @@ class Depreciation_controller {
             if (is_array($items)){
                 foreach ($items as $key => $value){
                     if (empty($value)) throw new Exception('Empty parameter');
+
                     $table->remove($value);
                     $data['rows'][] = array($table->pkey => $value);
                     $total++;
@@ -310,6 +322,7 @@ class Depreciation_controller {
                 if (empty($items)){
                     throw new Exception('Empty parameter');
                 }
+
                 $table->remove($items);
                 $data['rows'][] = array($table->pkey => $items);
                 $data['total'] = $total = 1;
@@ -317,7 +330,7 @@ class Depreciation_controller {
 
             $data['success'] = true;
             $data['message'] = $total.' Data deleted successfully';
-            logging('delete data master depreciation');
+            logging('delete data business unit');
             $table->db->trans_commit(); //Commit Trans
 
         }catch (Exception $e) {
@@ -328,6 +341,54 @@ class Depreciation_controller {
         }
         return $data;
     }
+
+
+    public function tree_json() {
+
+        $ci = & get_instance();
+        $ci->load->model('data_master/organization');
+        $table = $ci->organization;
+
+        $organizationgroupcode = getVarClean('organizationgroupcode','str','System');
+        $organizationgroupid_fk = getVarClean('organizationgroupid_fk','int',-999);
+
+        $table->setCriteria('organizationgroupid_fk = '.$organizationgroupid_fk);
+        $items = $table->getAll(0,-1,'listingno','asc');
+        $data = array();
+        $data[] = array('id' => 0,
+                  'parentid' => -1,
+                  'text' => $organizationgroupcode,
+                  'expanded' => true,
+                  'selected' => true,
+                  'icon' => base_url('images/home.png'));
+
+        foreach($items as $item) {
+
+            if( $table->emptyChildren($item['organizationid_pk']) ) {
+                $data[] = array(
+                            'id' => $item['organizationid_pk'],
+                            'parentid' => empty($item['parentid_fk']) ? 0 : $item['parentid_fk'],
+                            'text' => $item['organizationcode'],
+                            'expanded' => false,
+                            'selected' => false,
+                            'icon' => base_url('images/file-icon.png')
+                          );
+            }else {
+                $data[] = array(
+                            'id' => $item['organizationid_pk'],
+                            'parentid' => empty($item['parentid_fk']) ? 0 : $item['parentid_fk'],
+                            'text' => $item['organizationcode'],
+                            'expanded' => false,
+                            'selected' => false,
+                            'icon' => base_url('images/folder-close.png')
+                          );
+            }
+        }
+
+        echo json_encode($data);
+        exit;
+    }
+
 }
 
-/* End of file Icons_controller.php */
+/* End of file Business_unit_controller.php */

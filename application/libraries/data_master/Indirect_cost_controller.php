@@ -1,16 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
 * Json library
-* @class Depreciation_controller
-* @version 2018-05-24 15:14:27
+* @class Indirect_cost_controller
+* @version 2018-05-29 14:32:15
 */
-class Depreciation_controller {
+class Indirect_cost_controller {
 
     function read() {
 
         $page = getVarClean('page','int',1);
         $limit = getVarClean('rows','int',5);
-        $sidx = getVarClean('sidx','str','depreciationid_pk');
+        $sidx = getVarClean('sidx','str','indirectcostid_pk');
         $sord = getVarClean('sord','str','asc');
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
@@ -18,8 +18,8 @@ class Depreciation_controller {
         try {
 
             $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
+            $ci->load->model('data_master/indirect_cost');
+            $table = $ci->indirect_cost;
 
             $req_param = array(
                 "sort_by" => $sidx,
@@ -62,7 +62,7 @@ class Depreciation_controller {
 
             $data['rows'] = $table->getAll();
             $data['success'] = true;
-            logging('view data master depreciation');
+            logging('view data master indirect cost');
         }catch (Exception $e) {
             $data['message'] = $e->getMessage();
         }
@@ -70,45 +70,6 @@ class Depreciation_controller {
         return $data;
     }
 
-
-    function readLov() {
-
-        $start = getVarClean('current','int',0);
-        $limit = getVarClean('rowCount','int',5);
-
-        $sort = getVarClean('sort','str','listingno');
-        $dir  = getVarClean('dir','str','asc');
-
-        $searchPhrase = getVarClean('searchPhrase', 'str', '');
-
-        $data = array('rows' => array(), 'success' => false, 'message' => '', 'current' => $start, 'rowCount' => $limit, 'total' => 0);
-
-        try {
-
-            $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
-
-            if(!empty($searchPhrase)) {
-                $table->setCriteria("upper(code) like upper('%".$searchPhrase."%') OR
-                                         upper(description) like upper('%".$searchPhrase."%')");
-
-            }
-
-            $start = ($start-1) * $limit;
-            $items = $table->getAll($start, $limit, $sort, $dir);
-            $totalcount = $table->countAll();
-
-            $data['rows'] = $items;
-            $data['success'] = true;
-            $data['total'] = $totalcount;
-
-        }catch (Exception $e) {
-            $data['message'] = $e->getMessage();
-        }
-
-        return $data;
-    }
 
     function crud() {
 
@@ -143,8 +104,8 @@ class Depreciation_controller {
     function create() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/indirect_cost');
+        $table = $ci->indirect_cost;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -198,7 +159,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data added successfully';
-                logging('create data master depreciation');
+                logging('create data master indirect cost');
 
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
@@ -215,8 +176,8 @@ class Depreciation_controller {
     function update() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/indirect_cost');
+        $table = $ci->indirect_cost;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -270,7 +231,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data update successfully';
-                logging('update data master depreciation');
+                logging('update data master indirect cost');
                 $data['rows'] = $table->get($items[$table->pkey]);
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
@@ -286,8 +247,8 @@ class Depreciation_controller {
 
     function destroy() {
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/indirect_cost');
+        $table = $ci->indirect_cost;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -317,7 +278,7 @@ class Depreciation_controller {
 
             $data['success'] = true;
             $data['message'] = $total.' Data deleted successfully';
-            logging('delete data master depreciation');
+            logging('delete data master indirect cost');
             $table->db->trans_commit(); //Commit Trans
 
         }catch (Exception $e) {
@@ -330,4 +291,4 @@ class Depreciation_controller {
     }
 }
 
-/* End of file Icons_controller.php */
+/* End of file Indirect_cost_controller.php */

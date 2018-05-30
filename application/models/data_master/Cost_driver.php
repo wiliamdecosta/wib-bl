@@ -1,21 +1,28 @@
 <?php
 
 /**
- * Pl_item Model
+ * Cost_driver Model
  *
  */
-class Pl_item extends Abstract_model {
+class Cost_driver extends Abstract_model {
 
-    public $table           = "tblm_plitem_1";
-    public $pkey            = "plitemid_pk";
-    public $alias           = "plitem";
+    public $table           = "tblm_costdriver_12";
+    public $pkey            = "costdriverid_pk";
+    public $alias           = "costdriver";
 
     public $fields          = array(
-                                'plitemid_pk'      => array('pkey' => true, 'type' => 'int', 'nullable' => true, 'unique' => true, 'display' => 'PLGROUPID_PK'),
+                                'costdriverid_pk'      => array('pkey' => true, 'type' => 'int', 'nullable' => true, 'unique' => true, 'display' => 'PLGROUPID_PK'),
                                 'code'                  => array('nullable' => false, 'type' => 'str', 'unique' => true, 'display' => 'CODE'),
-                                'plgroupid_fk'            => array('nullable' => false, 'type' => 'int', 'unique' => false, 'display' => 'PLGROUPID_FK'),
+                                'businessunitid_fk'            => array('nullable' => false, 'type' => 'int', 'unique' => false, 'display' => 'BUSINESSUNITID_FK'),
+                                'unitid_fk'            => array('nullable' => false, 'type' => 'int', 'unique' => false, 'display' => 'UNITID_FK'),
                                 'listingno'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'LISTINGNO'),
-                                'description'         => array('nullable' => true, 'type' => 'str', 'unique' => false, 'display' => 'DESCRIPTION'),
+                                'domtrafficvalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'DOMTRAFFICVALUE'),
+                                'domnetworkvalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'DOMNETWORKVALUE'),
+                                'intltrafficvalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'INTLTRAFFICVALUE'),
+                                'intlnetworkvalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'INTLNETWORKVALUE'),
+                                'intladjacentvalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'INTLADJACENTVALUE'),
+                                'infravalue'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'INFRAVALUE'),
+                                'description'                  => array('nullable' => false, 'type' => 'str', 'unique' => true, 'display' => 'DESCRIPTION'),
 
                                 'creationdate'         => array('nullable' => true, 'type' => 'date', 'unique' => false, 'display' => 'Creation Date'),
                                 'createdby'             => array('nullable' => true, 'type' => 'str', 'unique' => false, 'display' => 'Created By'),
@@ -24,9 +31,10 @@ class Pl_item extends Abstract_model {
 
                             );
 
-    public $selectClause    = "plitem.*, plgroup.code as plgroupcode";
-    public $fromClause      = "tblm_plitem_1 plitem
-                                        left join tblm_plgroup_1 plgroup on plitem.plgroupid_fk = plgroup.plgroupid_pk";
+    public $selectClause    = "costdriver.*, businessunit.code as businessunitcode, unit.code as unitcode";
+    public $fromClause      = "tblm_costdriver_12 costdriver
+                                        left join tblm_businessunit businessunit on costdriver.businessunitid_fk = businessunit.businessunitid_pk
+                                        left join tblm_unit unit on costdriver.unitid_fk = unit.unitid_pk";
 
     public $refs            = array();
 
@@ -73,4 +81,4 @@ class Pl_item extends Abstract_model {
 
 }
 
-/* End of file Pl_group.php */
+/* End of file Cost_driver.php */

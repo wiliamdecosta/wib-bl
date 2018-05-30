@@ -10,61 +10,18 @@
             <i class="fa fa-circle"></i>
         </li>
         <li>
-            <span>Organization Group</span>
+            <span>Task Type</span>
         </li>
     </ul>
 </div>
 <!-- end breadcrumb -->
 <div class="space-4"></div>
 <div class="row">
-    <div class="col-xs-12">
-        <div class="tabbable">
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-1">
-                        <i class="blue"></i>
-                        <strong> Organization Group </strong>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-2">
-                        <i class="blue"></i>
-                        <strong> Organization </strong>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="tab-content no-border">
-            <div class="row">
-                <div class="col-xs-12">
-                   <table id="grid-table"></table>
-                   <div id="grid-pager"></div>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-12">
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
     </div>
 </div>
-
-<script>
-$("#tab-2").on("click", function(event) {
-
-    event.stopPropagation();
-    var grid = $('#grid-table');
-    organizationgroupid_pk = grid.jqGrid ('getGridParam', 'selrow');
-    organizationgroupcode = grid.jqGrid ('getCell', organizationgroupid_pk, 'code');
-
-    if(organizationgroupid_pk == null) {
-        swal('Informasi','Silahkan pilih salah satu Organization Group','info');
-        return false;
-    }
-
-    loadContentWithParams("data_master.organization", {
-        organizationgroupid_fk: organizationgroupid_pk,
-        organizationgroupcode : organizationgroupcode
-    });
-});
-</script>
 
 <script>
 
@@ -73,31 +30,17 @@ $("#tab-2").on("click", function(event) {
         var pager_selector = "#grid-pager";
 
         jQuery("#grid-table").jqGrid({
-            url: '<?php echo WS_JQGRID."data_master.organization_group_controller/crud"; ?>',
+            url: '<?php echo WS_JQGRID."data_master.task_type_controller/crud"; ?>',
             datatype: "json",
             mtype: "POST",
             colModel: [
-                {label: 'ID', name: 'organizationgroupid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
-                {label: 'Organization Group Code',name: 'code',width: 150, align: "left",editable: true,
+                {label: 'ID', name: 'tasktypeid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
+                {label: 'Category Code',name: 'code',width: 150, align: "left",editable: true,
                     editoptions: {
                         size: 30,
-                        maxlength:32
+                        maxlength:64
                     },
                     editrules: {required: true}
-                },
-                {label: 'Listing No',name: 'listingno',width: 150, align: "left",editable: true, number:true,
-                    editoptions: {
-                        size: 15,
-                        maxlength:255,
-                        dataInit: function(element) {
-                            $(element).keypress(function(e){
-                                 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
-                                    return false;
-                                 }
-                            });
-                        }
-                    },
-                    editrules: {required: false}
                 },
                 {label: 'Description',name: 'description',width: 200, align: "left",editable: true,
                     edittype:'textarea',
@@ -136,8 +79,8 @@ $("#tab-2").on("click", function(event) {
 
             },
             //memanggil controller jqgrid yang ada di controller crud
-            editurl: '<?php echo WS_JQGRID."data_master.organization_group_controller/crud"; ?>',
-            caption: "Organization Group"
+            editurl: '<?php echo WS_JQGRID."data_master.task_type_controller/crud"; ?>',
+            caption: "Task Type"
 
         });
 

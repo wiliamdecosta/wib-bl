@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Pl_item Model
+ * Indirect_cost Model
  *
  */
-class Pl_item extends Abstract_model {
+class Indirect_cost extends Abstract_model {
 
-    public $table           = "tblm_plitem_1";
-    public $pkey            = "plitemid_pk";
-    public $alias           = "plitem";
+    public $table           = "tblm_indirectcost_1";
+    public $pkey            = "indirectcostid_pk";
+    public $alias           = "indirect_cost";
 
     public $fields          = array(
-                                'plitemid_pk'      => array('pkey' => true, 'type' => 'int', 'nullable' => true, 'unique' => true, 'display' => 'PLGROUPID_PK'),
-                                'code'                  => array('nullable' => false, 'type' => 'str', 'unique' => true, 'display' => 'CODE'),
-                                'plgroupid_fk'            => array('nullable' => false, 'type' => 'int', 'unique' => false, 'display' => 'PLGROUPID_FK'),
+                                'indirectcostid_pk'      => array('pkey' => true, 'type' => 'int', 'nullable' => true, 'unique' => true, 'display' => 'INDIRECTCOSTID_PK'),
+                                'code'                      => array('nullable' => false, 'type' => 'str', 'unique' => true, 'display' => 'CODE'),
+                                'businessunitid_fk'      => array('nullable' => false, 'type' => 'int', 'unique' => false, 'display' => 'BUSINESSUNITID_FK'),
                                 'listingno'            => array('nullable' => true, 'type' => 'int', 'unique' => false, 'display' => 'LISTINGNO'),
-                                'description'         => array('nullable' => true, 'type' => 'str', 'unique' => false, 'display' => 'DESCRIPTION'),
+                                'description'              => array('nullable' => true, 'type' => 'str', 'unique' => false, 'display' => 'DESCRIPTION'),
 
                                 'creationdate'         => array('nullable' => true, 'type' => 'date', 'unique' => false, 'display' => 'Creation Date'),
                                 'createdby'             => array('nullable' => true, 'type' => 'str', 'unique' => false, 'display' => 'Created By'),
@@ -24,9 +24,10 @@ class Pl_item extends Abstract_model {
 
                             );
 
-    public $selectClause    = "plitem.*, plgroup.code as plgroupcode";
-    public $fromClause      = "tblm_plitem_1 plitem
-                                        left join tblm_plgroup_1 plgroup on plitem.plgroupid_fk = plgroup.plgroupid_pk";
+    public $selectClause    = "indirect_cost.*, businessunit.code as businessunitcode";
+
+    public $fromClause      = "tblm_indirectcost_1 indirect_cost
+                                        left join tblm_businessunit businessunit on indirect_cost.businessunitid_fk = businessunit.businessunitid_pk";
 
     public $refs            = array();
 
@@ -47,6 +48,7 @@ class Pl_item extends Abstract_model {
             $this->db->set('updateddate',"sysdate",false);
             $this->record['updatedby'] = $userdata['user_name'];
 
+
             if(empty($this->record['listingno'])) {
                 $this->db->set('listingno',"null",false);
                 unset($this->record['listingno']);
@@ -60,7 +62,6 @@ class Pl_item extends Abstract_model {
 
             $this->db->set('updateddate',"sysdate",false);
             $this->record['updatedby'] = $userdata['user_name'];
-
 
             if(empty($this->record['listingno'])) {
                 $this->db->set('listingno',"null",false);

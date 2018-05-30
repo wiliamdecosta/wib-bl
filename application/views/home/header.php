@@ -23,7 +23,7 @@
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
         <div class="logo-cam">
-            <img src="<?php echo base_url().'assets/image/logo_captrack.png'; ?>" height="25px">
+            <img src="<?php echo base_url().'assets/image/logo_wib.png'; ?>" height="25px">
         </div>
         <!-- BEGIN HEADER -->
         <div class="page-header navbar navbar-fixed-top">

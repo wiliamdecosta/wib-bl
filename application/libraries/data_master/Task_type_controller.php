@@ -1,16 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
 * Json library
-* @class Depreciation_controller
-* @version 2018-05-24 15:14:27
+* @class Task_type_controller
+* @version 2018-05-24 14:29:35
 */
-class Depreciation_controller {
+class Task_type_controller {
 
     function read() {
 
         $page = getVarClean('page','int',1);
         $limit = getVarClean('rows','int',5);
-        $sidx = getVarClean('sidx','str','depreciationid_pk');
+        $sidx = getVarClean('sidx','str','tasktypeid_pk');
         $sord = getVarClean('sord','str','asc');
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
@@ -18,8 +18,8 @@ class Depreciation_controller {
         try {
 
             $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
+            $ci->load->model('data_master/task_type');
+            $table = $ci->task_type;
 
             $req_param = array(
                 "sort_by" => $sidx,
@@ -62,7 +62,7 @@ class Depreciation_controller {
 
             $data['rows'] = $table->getAll();
             $data['success'] = true;
-            logging('view data master depreciation');
+            logging('view data master task type');
         }catch (Exception $e) {
             $data['message'] = $e->getMessage();
         }
@@ -86,8 +86,8 @@ class Depreciation_controller {
         try {
 
             $ci = & get_instance();
-            $ci->load->model('data_master/depreciation');
-            $table = $ci->depreciation;
+            $ci->load->model('data_master/task_type');
+            $table = $ci->task_type;
 
             if(!empty($searchPhrase)) {
                 $table->setCriteria("upper(code) like upper('%".$searchPhrase."%') OR
@@ -109,6 +109,7 @@ class Depreciation_controller {
 
         return $data;
     }
+
 
     function crud() {
 
@@ -143,8 +144,8 @@ class Depreciation_controller {
     function create() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/task_type');
+        $table = $ci->task_type;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -198,7 +199,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data added successfully';
-                logging('create data master depreciation');
+                logging('create data master task type');
 
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
@@ -215,8 +216,8 @@ class Depreciation_controller {
     function update() {
 
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/task_type');
+        $table = $ci->task_type;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -270,7 +271,7 @@ class Depreciation_controller {
 
                 $data['success'] = true;
                 $data['message'] = 'Data update successfully';
-                logging('update data master depreciation');
+                logging('update data master task type');
                 $data['rows'] = $table->get($items[$table->pkey]);
             }catch (Exception $e) {
                 $table->db->trans_rollback(); //Rollback Trans
@@ -286,8 +287,8 @@ class Depreciation_controller {
 
     function destroy() {
         $ci = & get_instance();
-        $ci->load->model('data_master/depreciation');
-        $table = $ci->depreciation;
+        $ci->load->model('data_master/task_type');
+        $table = $ci->task_type;
 
         $data = array('rows' => array(), 'page' => 1, 'records' => 0, 'total' => 1, 'success' => false, 'message' => '');
 
@@ -317,7 +318,7 @@ class Depreciation_controller {
 
             $data['success'] = true;
             $data['message'] = $total.' Data deleted successfully';
-            logging('delete data master depreciation');
+            logging('delete data master task type');
             $table->db->trans_commit(); //Commit Trans
 
         }catch (Exception $e) {
@@ -330,4 +331,4 @@ class Depreciation_controller {
     }
 }
 
-/* End of file Icons_controller.php */
+/* End of file Task_type_controller.php */

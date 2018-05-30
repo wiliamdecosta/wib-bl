@@ -69,7 +69,8 @@ class Modules extends Abstract_model {
                         where rm.role_id in (select c.role_id
                                     from role_user c
                                     left join roles d on c.role_id = d.role_id
-                                    where c.user_id = ? and d.is_active = 'Y'))";
+                                    where c.user_id = ? and d.is_active = 'Y'))
+                        order by m.module_id asc";
 
 
         $query = $this->db->query($sql, array($user_id));

@@ -10,60 +10,42 @@
             <i class="fa fa-circle"></i>
         </li>
         <li>
-            <span>Organization Group</span>
+            <span>PL Item</span>
         </li>
     </ul>
 </div>
 <!-- end breadcrumb -->
 <div class="space-4"></div>
 <div class="row">
-    <div class="col-xs-12">
-        <div class="tabbable">
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-1">
-                        <i class="blue"></i>
-                        <strong> Organization Group </strong>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="javascript:;" data-toggle="tab" aria-expanded="true" id="tab-2">
-                        <i class="blue"></i>
-                        <strong> Organization </strong>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="tab-content no-border">
-            <div class="row">
-                <div class="col-xs-12">
-                   <table id="grid-table"></table>
-                   <div id="grid-pager"></div>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-12">
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
     </div>
 </div>
 
+<?php $this->load->view('lov/lov_pl_item'); ?>
+
+
 <script>
-$("#tab-2").on("click", function(event) {
+/**
+ * [showLOVBusinessUnit called by input menu_icon to show List Of Value (LOV) of icon]
+ * @param  {[type]} id   [description]
+ * @param  {[type]} code [description]
+ * @return {[type]}      [description]
+ */
+function showLOVPLItem(id, code) {
+    modal_lov_pl_item_show(id, code);
+}
 
-    event.stopPropagation();
-    var grid = $('#grid-table');
-    organizationgroupid_pk = grid.jqGrid ('getGridParam', 'selrow');
-    organizationgroupcode = grid.jqGrid ('getCell', organizationgroupid_pk, 'code');
+/**
+ * [clearInputBusinessUnit called by beforeShowForm method to clean input of plitemid_fk]
+ * @return {[type]} [description]
+ */
+function clearInputPLItem() {
+    $('#form_plitemid_fk').val('');
+    $('#form_plitemcode').val('');
+}
 
-    if(organizationgroupid_pk == null) {
-        swal('Informasi','Silahkan pilih salah satu Organization Group','info');
-        return false;
-    }
-
-    loadContentWithParams("data_master.organization", {
-        organizationgroupid_fk: organizationgroupid_pk,
-        organizationgroupcode : organizationgroupcode
-    });
-});
 </script>
 
 <script>
@@ -73,32 +55,64 @@ $("#tab-2").on("click", function(event) {
         var pager_selector = "#grid-pager";
 
         jQuery("#grid-table").jqGrid({
-            url: '<?php echo WS_JQGRID."data_master.organization_group_controller/crud"; ?>',
+            url: '<?php echo WS_JQGRID."data_master.gl_acc_pl_map_controller/crud"; ?>',
             datatype: "json",
             mtype: "POST",
             colModel: [
-                {label: 'ID', name: 'organizationgroupid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
-                {label: 'Organization Group Code',name: 'code',width: 150, align: "left",editable: true,
+                {label: 'ID', name: 'glaccplmapid_pk', key: true, width: 5, sorttype: 'number', editable: true, hidden: true},
+                {label: 'GL Account',name: 'glaccount',width: 150, align: "left",editable: true,
                     editoptions: {
                         size: 30,
                         maxlength:32
                     },
                     editrules: {required: true}
                 },
-                {label: 'Listing No',name: 'listingno',width: 150, align: "left",editable: true, number:true,
+                {label: 'PL Item code', name: 'plitemcode', width: 120, align: "left", editable: false},
+                {label: 'PL Item',
+                    name: 'plitemid_fk',
+                    width: 200,
+                    sortable: true,
+                    editable: true,
+                    hidden: true,
+                    editrules: {edithidden: true, required:false},
+                    edittype: 'custom',
                     editoptions: {
-                        size: 15,
-                        maxlength:255,
-                        dataInit: function(element) {
-                            $(element).keypress(function(e){
-                                 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
-                                    return false;
-                                 }
-                            });
+                        "custom_element":function( value  , options) {
+                            var elm = $('<span></span>');
+
+                            // give the editor time to initialize
+                            setTimeout( function() {
+                                elm.append('<input id="form_plitemid_fk" type="text"  style="display:none;">'+
+                                        '<input id="form_plitemcode" readonly type="text" class="FormElement form-control" placeholder="Choose PL Item">'+
+                                        '<button class="btn btn-success" type="button" onclick="showLOVPLItem(\'form_plitemid_fk\',\'form_plitemcode\')">'+
+                                        '   <span class="fa fa-search bigger-110"></span>'+
+                                        '</button>');
+                                $("#form_plitemid_fk").val(value);
+                                elm.parent().removeClass('jqgrid-required');
+                            }, 100);
+
+                            return elm;
+                        },
+                        "custom_value":function( element, oper, gridval) {
+
+                            if(oper === 'get') {
+                                return $("#form_plitemid_fk").val();
+                            } else if( oper === 'set') {
+                                $("#form_plitemid_fk").val(gridval);
+                                var gridId = this.id;
+                                // give the editor time to set display
+                                setTimeout(function(){
+                                    var selectedRowId = $("#"+gridId).jqGrid ('getGridParam', 'selrow');
+                                    if(selectedRowId != null) {
+                                        var code_display = $("#"+gridId).jqGrid('getCell', selectedRowId, 'businessunitcode');
+                                        $("#form_plitemcode").val( code_display );
+                                    }
+                                },100);
+                            }
                         }
-                    },
-                    editrules: {required: false}
+                    }
                 },
+                {label: 'PL Group code', name: 'plgroupcode', width: 120, align: "left", editable: false},
                 {label: 'Description',name: 'description',width: 200, align: "left",editable: true,
                     edittype:'textarea',
                     editoptions: {
@@ -136,8 +150,8 @@ $("#tab-2").on("click", function(event) {
 
             },
             //memanggil controller jqgrid yang ada di controller crud
-            editurl: '<?php echo WS_JQGRID."data_master.organization_group_controller/crud"; ?>',
-            caption: "Organization Group"
+            editurl: '<?php echo WS_JQGRID."data_master.gl_acc_pl_map_controller/crud"; ?>',
+            caption: "GL Acc PL Mapping"
 
         });
 
@@ -203,6 +217,11 @@ $("#tab-2").on("click", function(event) {
                 beforeShowForm: function (e, form) {
                     var form = $(e[0]);
                     style_edit_form(form);
+
+
+                    setTimeout(function() {
+                        clearInputPLItem();
+                    },100);
                 },
                 afterShowForm: function(form) {
                     form.closest('.ui-jqdialog').center();
@@ -217,6 +236,7 @@ $("#tab-2").on("click", function(event) {
                     var tinfoel = $(".tinfo").show();
                     tinfoel.delay(3000).fadeOut();
 
+                    clearInputPLItem();
 
                     return [true,"",response.responseText];
                 }
